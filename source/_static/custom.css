@@ -1,0 +1,117 @@
+/* LASER docs colour scheme
+ *
+ *   Deep plum      #6B2D4A   headings, link hover, visited links
+ *   LASER pink     #CD547D   accents (sidebar header, top bar, note titles)
+ *   Link pink      #B03F67   links (a slightly darker pink so it is readable on white)
+ *   Dusty rose     #E8A3B8   sidebar captions, borders
+ *   Blush          #F8E4EA   note boxes, code backgrounds
+ *   Warm charcoal  #2F2A2D   sidebar menu background
+ */
+
+/* ---- Sidebar ------------------------------------------------------------ */
+
+.wy-side-nav-search,
+.wy-nav-top {
+    background-color: #CD547D;
+}
+
+.wy-nav-side {
+    background-color: #2F2A2D;
+}
+
+/* Section captions such as "PIPELINE DOCUMENTATION:" */
+.wy-menu-vertical p.caption,
+.wy-menu-vertical p.caption .caption-text {
+    color: #E8A3B8;
+}
+
+.wy-menu-vertical a {
+    color: #E6DDE1;
+}
+
+.wy-menu-vertical a:hover {
+    background-color: #463C41;
+    color: #FFFFFF;
+}
+
+/* Current page entry: blush highlight with a pink edge */
+.wy-menu-vertical li.current {
+    background-color: #F8E4EA;
+}
+
+.wy-menu-vertical li.current > a,
+.wy-menu-vertical li.toctree-l1.current > a {
+    border-left: 4px solid #CD547D;
+    color: #2F2A2D;
+}
+
+.wy-menu-vertical li.current a:hover,
+.wy-menu-vertical li.toctree-l2.current > a,
+.wy-menu-vertical li.toctree-l2.current li.toctree-l3 > a {
+    background-color: #F1D0DB;
+}
+
+/* ---- Page content ------------------------------------------------------- */
+
+.rst-content h1,
+.rst-content h2,
+.rst-content h3,
+.rst-content h4 {
+    color: #6B2D4A;
+}
+
+a,
+.rst-content a {
+    color: #B03F67;
+}
+
+a:hover,
+.rst-content a:hover {
+    color: #6B2D4A;
+}
+
+a:visited,
+.rst-content a:visited {
+    color: #6B2D4A;
+}
+
+/* Inline code such as ``params.platform`` (the theme default is red) */
+.rst-content code.literal,
+.rst-content tt.literal {
+    color: #6B2D4A;
+    background-color: #F8E4EA;
+    border-color: #E8A3B8;
+}
+
+/* Code blocks */
+.rst-content div[class^="highlight"],
+.rst-content pre.literal-block {
+    border-color: #E8A3B8;
+}
+
+.highlight {
+    background-color: #FBF1F4;
+}
+
+/* Note boxes */
+.rst-content .note,
+.rst-content .important,
+.rst-content .tip,
+.rst-content .hint {
+    background-color: #F8E4EA;
+}
+
+.rst-content .note .admonition-title,
+.rst-content .tip .admonition-title,
+.rst-content .hint .admonition-title {
+    background-color: #CD547D;
+}
+
+.rst-content .important .admonition-title {
+    background-color: #6B2D4A;
+}
+
+/* Previous / Next buttons at the bottom of each page */
+.btn-neutral:hover {
+    background-color: #F8E4EA !important;
+}
