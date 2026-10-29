@@ -6,6 +6,8 @@
 
 LASER is a Nextflow pipeline for long-read RNA-seq analysis, designed to identify allele-specific expression (ASE) and transcript usage from PacBio Iso-Seq and Oxford Nanopore Technology (ONT) data.
 
+Readthedocs.io: https://laser-long-read-allele-specific-expression-resolver.readthedocs.io/en/latest/index.html
+
 ## Pipeline overview
 
 ```mermaid
