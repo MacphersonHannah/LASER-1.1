@@ -129,7 +129,7 @@ Each platform has a small test dataset bundled under ``test_data/``, with a read
    * - ``pacbio``
      - ``test_data/PACBIO_untargeted_not_fastq_entry/``
      - Included
-     - 2 samples, 10k reads each
+     - 2 ENCODE samples, 10k reads each
    * - ``pacbio_fastqentry``
      - ``test_data/PACBIO_untargeted_fastq_entry/``
      - Included
@@ -141,7 +141,7 @@ Each platform has a small test dataset bundled under ``test_data/``, with a read
    * - ``ont_cdna_minimap_entry``
      - ``test_data/ONT_cDNA_minimap_input/``
      - Included
-     - 2 samples, 50k reads each
+     - 2 control brain samples, 50k reads each
    * - ``ont_directrna``
      - ``test_data/ONT_directRNA/``
      - Included
