@@ -53,3 +53,5 @@ html_theme_options = {
     'style_nav_header_background': '#CD547D',
 }
 html_static_path = ['_static']
+# Colour scheme (plum / pink / dusty rose / blush / charcoal)
+html_css_files = ['custom.css']

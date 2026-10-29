@@ -45,6 +45,7 @@ Pipeline Overview
 .. mermaid::
    :alt: LASER pipeline flowchart, from input reads through preprocessing, locus identification, isoform annotation and transcript summary extraction to allelic effect testing
 
+   %%{init: {"theme": "base", "themeVariables": {"primaryColor": "#F8E4EA", "primaryBorderColor": "#CD547D", "primaryTextColor": "#2F2A2D", "lineColor": "#6B2D4A"}}}%%
    flowchart TD
        A["Input reads<br/>(PacBio FLNC / ONT FASTQ / ONT BAM)"] --> B["Platform-specific preprocessing<br/>mapping, isoform discovery/collapse,<br/>variant calling"]
        B --> C["identify_loci<br/>read-sample map,<br/>WhatsHap phasing + haplotagging"]
@@ -57,6 +58,10 @@ Pipeline Overview
        H --> J["Four-way classification<br/>per locus, per sample"]
        I --> J
        J --> K["allelic_effect_testing/&lt;sample&gt;/<br/>allelic_effect_results.tsv"]
+       classDef decision fill:#CD547D,stroke:#6B2D4A,color:#FFFFFF
+       classDef output fill:#6B2D4A,stroke:#6B2D4A,color:#FFFFFF
+       class F decision
+       class K output
 
 
 
