@@ -1,4 +1,6 @@
 sphinx-rtd-theme
 nbsphinx
+ipython
 sphinx-copybutton
+sphinxcontrib-mermaid
 pandoc
