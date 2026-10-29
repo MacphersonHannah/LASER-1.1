@@ -1,0 +1,16 @@
+name: stats_r_env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - r-base=4.5.1
+  - r-dplyr
+  - r-readr
+  - r-tidyr
+  - r-purrr
+  - r-stringr
+  - r-tibble
+  - r-jsonlite
+  - r-optparse

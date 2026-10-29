@@ -1,0 +1,10 @@
+# envs/isoquant.yml
+name: isoquant
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+
+dependencies:
+  - bioconda::isoquant=3.13.0
+  - bioconda::samtools>=1.18

@@ -1,0 +1,48 @@
+# Work directories
+work/
+work_*/
+results/
+run_*/
+
+# Conda environments
+envs_prebuilt/
+.conda_cache/
+
+# Containers
+containers/
+
+# Tools
+tools/
+
+# Nextflow
+.nextflow/
+.nextflow.log*
+*.log
+.sing/
+
+# Data files
+*.bam
+*.bam.bai
+*.fastq.gz
+*.fasta
+*.fa
+*.gtf
+*.db
+*.vcf
+*.vcf.gz
+
+# But keep everything in test_data/
+!test_data/
+!test_data/**
+
+# Python
+__pycache__/
+*.pyc
+
+# Temp
+*.tmp
+.DS_Store
+
+# personal analysis scripts, not part of the pipeline
+scripts/check_theta_calibration.py
+scripts/check_theta_calibration_NULLS.R

@@ -1,0 +1,15 @@
+# isocall_laser
+# Utilities needed to process isocall outputs.
+# The isocall binary itself is NOT available via conda (pre-release PacBio tool).
+
+name: isocall_laser
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - python=3.11
+  - samtools=1.23.1
+  - htslib=1.23.1       # provides bgzip and tabix (for .gtf.gz decompression)
+  - pigz                # parallel gzip, useful for large files

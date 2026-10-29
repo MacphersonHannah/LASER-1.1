@@ -1,0 +1,12 @@
+name: pychopper
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - pychopper=2.7.10
+  - minimap2=2.31
+  - samtools=1.23.1
+  - python=3.10
+  - pigz
+  - parallel

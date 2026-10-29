@@ -1,0 +1,4 @@
+source,theta,achieved_fpr,n_loci,n_samples_pooled,calibration_date,laser_version,notes
+brain_dlpfc,0.0119,0.0449,,,,1.1,From prior interactive DLPFC calibration (N=302650 permutations total). n_loci/n_samples_pooled/date not recorded from that run -- fill in if known.
+heart,PLACEHOLDER,,,,,1.1,Not yet calibrated in pipeline form. Run CALIBRATE_THETA_POOLED on heart-only samples (or lift from an existing heart run) and fill this row in.
+all_encode,PLACEHOLDER,,,,,1.1,Not yet calibrated in pipeline form. Run CALIBRATE_THETA_POOLED on the full 9-sample ENCODE set and fill this row in.

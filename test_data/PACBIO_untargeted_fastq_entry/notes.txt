@@ -1,0 +1,1 @@
+50,000 reads randomly sampled from 2x ENCODE samples

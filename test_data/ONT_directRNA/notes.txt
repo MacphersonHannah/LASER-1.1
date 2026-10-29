@@ -1,0 +1,2 @@
+50,000 reads sampled from three samples from https://www.encodeproject.org/experiments/ENCSR758ABF/ (reads)
+NB they are human endodermal cell

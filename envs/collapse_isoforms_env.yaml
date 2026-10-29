@@ -1,0 +1,37 @@
+name: collapse_laser_v2
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  # Core - Python 3.10 (cdna_cupcake requirement)
+  - python=3.10
+  
+  # Main tools
+  - samtools=1.22
+  - minimap2=2.30
+  - bedtools=2.31.1
+  - htslib=1.22
+  
+  # PacBio tools
+  - isoseq=4.3.0
+  - cdna_cupcake=29.0.0
+  
+  # Python packages - COMPATIBLE WITH PYTHON 3.10 AND CUPCAKE!
+  - numpy=1.26.4          # Last 1.x version (cupcake needs <2.0)
+  - scipy=1.13.1          # Works with Python 3.10
+  - pandas=2.2.3
+  - biopython=1.85
+  - scikit-learn=1.5.2    # Compatible with numpy 1.x
+  - pysam=0.22.1          # Works with numpy 1.x
+  
+  # Additional tools
+  - bcbio-gff
+  - bx-python
+  - python-lzo
+  - joblib
+  - graphviz
+  
+  # R
+  - r-base=4.5.1

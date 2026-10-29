@@ -1,0 +1,12 @@
+name: lima_laser
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - python=3.11
+  - lima=2.13.0
+  - samtools=1.23.1
+  - biopython=1.85
+  - r-base=4.5.1

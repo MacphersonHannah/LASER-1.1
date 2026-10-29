@@ -1,0 +1,15 @@
+name: refine_laser
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - python=3.11
+  - isoseq=4.3.0
+  - isoseq3=4.0.0
+  - samtools=1.23.1
+  - r-base=4.5.1
+  - bash=5.2
+  - coreutils
+  - gsl=2.7

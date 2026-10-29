@@ -1,0 +1,31 @@
+name: core_utils_env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - python=3.12
+
+  # runner
+  - nextflow=25.04.6
+  - openjdk=17.0.15
+
+  # phasing
+  - whatshap=2.8
+  - samtools=1.22
+  - bcftools=1.20
+  - pulp
+  - networkx
+  - pyfaidx
+  - pyvcf3
+
+  # other
+  - pysam=0.24.0
+  - numpy=2.4.6
+  - scipy=1.16.2
+  - biopython=1.85
+
+  - pip
+  - pip:
+    - duckdb==1.1.3

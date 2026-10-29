@@ -1,0 +1,14 @@
+# envs/flair_env.yaml
+# FLAIR v3 environment for ONT cDNA transcript discovery and quantification
+# Install with: conda env create -f flair_env.yaml -p envs_prebuilt/flair_env
+name: flair_env
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - flair=3.0.0
+  - python>=3.8
+  - minimap2>=2.24
+  - samtools>=1.15
+  - bedtools>=2.30

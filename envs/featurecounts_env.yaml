@@ -1,0 +1,9 @@
+name: featurecounts_env
+channels:
+  - conda-forge
+  - bioconda
+
+dependencies:
+  - subread=2.1.1
+  - samtools=1.22
+  - python=3.11

@@ -1,0 +1,7 @@
+name: agat_env
+channels:
+  - conda-forge
+  - bioconda
+
+dependencies:
+  - agat=1.4.0

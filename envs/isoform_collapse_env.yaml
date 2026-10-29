@@ -1,0 +1,33 @@
+name: isoform_collapse_env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - python=3.10
+
+  # collapse 
+  - samtools=1.23.1
+  - htslib=1.23.1
+  - minimap2=2.31
+  - bedtools=2.31.1
+  - isoseq=4.3.0
+  - cdna_cupcake=29.0.0
+  - numpy=1.26.4          # cupcake requires <2.0
+  - scipy=1.13.1
+  - pandas=2.2.3
+  - biopython=1.85
+  - scikit-learn=1.5.2
+  - pysam=0.22.1          # matched to numpy 1.x
+  - bcbio-gff
+  - bx-python
+  - python-lzo
+  - joblib
+  - graphviz
+  - r-base=4.5.1
+
+  # pychopper
+  - pychopper=2.7.10
+  - pigz
+  - parallel
