@@ -118,7 +118,9 @@ bash run_LASER.sh {RUN_NAME} {config_file}
 ```
 This activates the required environment (core_utils_env) automatically.
 
-Working files are written to `run_{RUN_NAME}/work_{RUN_NAME}/`. Results are written to `run_{RUN_NAME}/{RUN_NAME}/`. The config file used is automatically copied into the results directory for reproducibility.
+Working files are written to `run_{RUN_NAME}/work_{RUN_NAME}/`. Results are written to `run_{RUN_NAME}/{RUN_NAME}/`. The config file used is automatically copied into the results directory for reproducibility, along with the Nextflow run report, timeline and trace.
+
+Results are hard-linked to the work directory rather than copied, so they cost almost no extra disk and survive deletion of the work directory.
 
 `RUN_NAME` decides where output goes: `run_LASER.sh` always passes `--outdir` on the Nextflow command line. Edit `RUN_NAME` when starting a new run. To re-run a run, just call it the same RUN_NAME and the --resume flag in run_laser.sh will resume from whatever has changed. To bypass this, delete --resume in run_laser.sh or delete the folder of the original run output.
 
@@ -620,14 +622,11 @@ See `example_configs/` for complete filled-in examples covering each platform:
 
 ## Troubleshooting
 
-**`No space left on device` from Singularity/Apptainer**
-Singularity stages container images to local `/tmp` during a run. This error usually just means `/tmp` on that node is full. Check available space and either free some up or run on a node with more local disk.
-
 **WhatsHap haplotagging gives very low phasing rates**
-Ensure `--no-reference` is set in the haplotag command in `whatshap_phase_tag.nf`. Without it, WhatsHap's realignment-based allele detection fails on reads with multiple indels near phase anchors, which is common in PacBio data. The phasing step should still use `--reference` for best phasing quality. This can also be a biological issue: loci must have expressed SNV or indel variants that differ between alleles to be phased.
+Ensure `--no-reference` is set in the haplotag command in `whatshap_phase_tag.nf`. Without it, WhatsHap's realignment-based allele detection fails on reads with multiple indels near phase anchors, which is common in PacBio data. The phasing step should still use `--reference` for best phasing quality. You can also choose to include indels (or not) in your config which will affect phasing rates. This can also be a biological issue: loci must have expressed SNV or indel variants that differ between alleles to be phased, so if a variant is in a lowly expressed exon with no additional UTR or intronic variants then you will get a low phasing rate. Different data inputs will also have more or less 'messy' data - the pipeline should circumvent this by only haplotyping on the called variants, but extremely messy data may affect phasing. LASER doesn't test any loci with more than 30% of reads unphased by default, but this can be adjusted in the config settings.
 
 **Pipeline resumes from cache**
-LASER supports Nextflow's `-resume` flag. All upstream steps that haven't changed will be cached and reused. `run_LASER.sh` passes `-resume` automatically; to force a fully fresh run, remove `-resume` from the `NF_CMD` array inside `run_LASER.sh` or delete the original output folder.
+LASER supports Nextflow's `-resume` flag. All upstream steps that haven't changed will be cached and reused. `run_LASER.sh` passes `-resume` automatically; to force a fully fresh run, remove `-resume` from inside `run_LASER.sh` or delete the original output folder.
 
 **Testing against an individual's own genome**
 Only the human/mouse genome has been used as a reference in testing but testing RNA/cDNA against the individual's own genome should theoretically work. Feel free to contact me if you're testing this and have any trouble.
