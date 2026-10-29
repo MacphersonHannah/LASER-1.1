@@ -10,17 +10,17 @@ LASER is a Nextflow pipeline for long-read RNA-seq analysis, designed to identif
 
 ```mermaid
 flowchart TD
-    A["Input reads\n(PacBio FLNC / ONT FASTQ / ONT BAM)"] --> B[Platform-specific preprocessing\nmapping, clustering/collapsing,\nvariant calling, phasing, haplotagging]
-    B --> C[identify_loci\nread-sample map, WhatsHap phasing + haplotagging]
-    C --> D[annotate_isoforms\nSQANTI3 QC, ORF annotation,\nfeatureCounts gene assignment,\nread-to-isoform lookup]
-    D --> E[Transcript summary extraction\nread x allele x transcript counts]
-    E --> F{Allelic effect testing}
-    F --> G["theta_mode:\ncalibrate_pooled / calibrate_pooled_by_group / fixed / lift"]
-    G --> H[abTE test\nbinomial, allele totals]
-    G --> I[abTU test\npermutation Dirichlet-Multinomial]
-    H --> J[Four-way classification\nper locus, per sample]
+    A["Input reads<br/>(PacBio FLNC / ONT FASTQ / ONT BAM)"] --> B["Platform-specific preprocessing<br/>mapping, isoform discovery/collapse,<br/>variant calling"]
+    B --> C["identify_loci<br/>read-sample map,<br/>WhatsHap phasing + haplotagging"]
+    C --> D["annotate_isoforms<br/>SQANTI3 QC, ORF annotation,<br/>haplotype tag extraction,<br/>read-to-isoform lookup"]
+    D --> E["Transcript summary extraction<br/>read x allele x transcript counts"]
+    E --> F{"Allelic effect testing"}
+    F --> G["theta_mode:<br/>calibrate_pooled / calibrate_pooled_by_group / fixed / lift"]
+    G --> H["abTE test<br/>binomial, allele totals"]
+    G --> I["abTU test<br/>permutation Dirichlet-Multinomial"]
+    H --> J["Four-way classification<br/>per locus, per sample"]
     I --> J
-    J --> K["allelic_effect_testing/&lt;sample&gt;/\nallelic_effect_results.tsv"]
+    J --> K["allelic_effect_testing/&lt;sample&gt;/<br/>allelic_effect_results.tsv"]
 ```
 
 
