@@ -48,7 +48,7 @@ See :doc:`nextflow_workflow_details` for details on the allelic effect testing s
 Required Annotation Files
 --------------------------
 
-The following external files must be downloaded and provided via ``nextflow.config`` before running LASER. See :doc:`nextflow_workflow_details` for the corresponding config parameters.
+The following external files must be downloaded and provided via your config file before running LASER. See :doc:`nextflow_workflow_details` for the corresponding config parameters.
 
 .. list-table::
    :widths: 20 40 40
@@ -73,7 +73,7 @@ The following external files must be downloaded and provided via ``nextflow.conf
      - `PolyA_DB / PolyASite atlas <https://polyasite.unibas.ch/>`_
      - ``atlas.clusters.2.0.GRCh38.96.mod.bed``
    * - ``poly_motifs``
-     - Bundled with SQANTI3
+     - **Bundled with LASER** at ``assets/human.polyA.list.txt``; also available in SQANTI3 at ``data/polyA_motifs/human.polyA.list.txt``
      - ``human.polyA.list.txt``
 
 ``genome`` must be the primary assembly FASTA (chromosomes + unplaced/unlocalised scaffolds, not alternate allele contigs). For non-human species, species-matched equivalents of these files are required. See :ref:`notes_non_human` for details.

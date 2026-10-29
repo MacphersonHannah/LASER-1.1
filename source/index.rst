@@ -39,10 +39,24 @@ LASER is a scalable, automated Nextflow pipeline that takes raw long-read RNA-se
 
 * **ASE and abTU assessment**: Identifies loci with allelic bias in total expression and transcript usage, with configurable thresholds for read depth, phasing quality, and isoform diversity.
 
-.. figure:: ../img/pipeline_v1.png
-   :alt: Bioinformatics workflow flowchart for allelic effect testing
-   :align: center
-   :width: 80%
+Pipeline Overview
+~~~~~~~~~~~~~~~~~
+
+.. mermaid::
+   :alt: LASER pipeline flowchart, from input reads through preprocessing, locus identification, isoform annotation and transcript summary extraction to allelic effect testing
+
+   flowchart TD
+       A["Input reads<br/>(PacBio FLNC / ONT FASTQ / ONT BAM)"] --> B["Platform-specific preprocessing<br/>mapping, isoform discovery/collapse,<br/>variant calling"]
+       B --> C["identify_loci<br/>read-sample map,<br/>WhatsHap phasing + haplotagging"]
+       C --> D["annotate_isoforms<br/>SQANTI3 QC, ORF annotation,<br/>haplotype tag extraction,<br/>read-to-isoform lookup"]
+       D --> E["Transcript summary extraction<br/>read x allele x transcript counts"]
+       E --> F{"Allelic effect testing"}
+       F --> G["theta_mode:<br/>calibrate_pooled / calibrate_pooled_by_group / fixed / lift"]
+       G --> H["abTE test<br/>binomial, allele totals"]
+       G --> I["abTU test<br/>permutation Dirichlet-Multinomial"]
+       H --> J["Four-way classification<br/>per locus, per sample"]
+       I --> J
+       J --> K["allelic_effect_testing/&lt;sample&gt;/<br/>allelic_effect_results.tsv"]
 
 
 

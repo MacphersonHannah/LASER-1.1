@@ -10,11 +10,6 @@ This page covers common errors and platform-specific notes for running LASER.
 Troubleshooting
 ---------------
 
-``Variable declarations cannot be mixed with config statements``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Run ``bash scripts/setup/validate_config.sh {config_file} --fix`` — this catches the usual cause (a stray byte-order mark or Windows line endings left behind after a config file was re-saved by another editor). See `nextflow-io/nextflow#5997 <https://github.com/nextflow-io/nextflow/issues/5997>`_ for background.
-
 ``No space left on device`` from Singularity/Apptainer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -23,7 +18,9 @@ Singularity stages container images to local ``/tmp`` during a run. This error u
 WhatsHap haplotagging gives very low phasing rates
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Ensure ``--no-reference`` is set in the haplotag command in ``whatshap_phase_tag.nf``. Without it, WhatsHap's realignment-based allele detection fails on reads with multiple indels near phase anchors, which is common in PacBio data. The phasing step should still use ``--reference`` for best phasing quality. This can also be a biological issue — loci must have expressed SNV or indel variants that differ between alleles to be phased.
+Ensure ``--no-reference`` is set in the haplotag command in ``whatshap_phase_tag.nf``. Without it, WhatsHap's realignment-based allele detection fails on reads with multiple indels near phase anchors, which is common in PacBio data. The phasing step should still use ``--reference`` for best phasing quality. You can also choose to include indels (or not) in your config, which will affect phasing rates.
+
+This can also be a biological issue: loci must have expressed SNV or indel variants that differ between alleles to be phased, so if a variant is in a lowly expressed exon with no additional UTR or intronic variants then you will get a low phasing rate. Different data inputs will also have more or less 'messy' data. The pipeline should circumvent this by only haplotyping on the called variants, but extremely messy data may affect phasing. LASER doesn't test any loci with more than 30% of reads unphased by default, but this can be adjusted in the config settings (``max_unphased_prop``).
 
 Pipeline resumes from cache
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -95,3 +92,14 @@ DeepVariant Model
 ~~~~~~~~~~~~~~~~~
 
 ``dv_model = 'MASSEQ'`` is correct for mouse PacBio Iso-Seq data. The MASSEQ model is trained on PacBio read characteristics, not human-specific sequence content.
+
+----
+
+.. _notes_reference_executors:
+
+A Note on Reference Files and Executors
+---------------------------------------
+
+LASER's default configs use ``executor = 'local'``, and several processes read reference files (``params.genome`` and its ``.fai``, ``params.gencode_gtf``, and the SQANTI3 annotation files) directly by path rather than staging them into each task's work directory. That means LASER assumes your reference files sit on a filesystem that every task can see at the same path. On a single large node, or any cluster with shared storage mounted identically across nodes, this is the normal arrangement and nothing is needed.
+
+If you switch the executor to a scheduler (``slurm``, ``sge``, and so on) where tasks may land on nodes with different mounts, or you run tasks in containers without ``autoMounts``, make sure the reference paths resolve identically everywhere, for example by placing them on the shared filesystem and bind-mounting that path into the containers.

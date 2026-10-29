@@ -3,7 +3,7 @@
 Nextflow Workflow Details
 ==========================
 
-This page describes the full configuration options for LASER. Edit ``nextflow.config`` before running the pipeline. For a minimal working example, see :doc:`installation_and_requirements`.
+This page describes the full configuration options for LASER. Copy the example config that matches your platform from ``example_configs/`` (see `Example Configs`_ below) and edit it before running the pipeline. For a minimal working example, see :doc:`installation_and_requirements`.
 
 ----
 
@@ -122,7 +122,7 @@ For ``ont_cdna``, set ``params.ont_chemistry`` to ``r9`` or ``r10`` to select th
 Option B: Starting from Unmapped BAMs (``ont_cdna_minimap_entry``)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Use this platform when your data is in unmapped BAM format (e.g. basecalled but not adapter-trimmed) and you want to skip pychopper entirely. Each BAM becomes one sample; the filename (minus ``.bam``) becomes the sample label.
+Use this platform when your data is in unmapped BAM format and you want to skip pychopper entirely as it has already been run. Each BAM becomes one sample; the filename (minus ``.bam``) becomes the sample label.
 
 .. code-block:: groovy
 
@@ -158,7 +158,7 @@ References
    params.cage        = '/path/to/refTSS_v3.3_human_coordinate.hg38.bed'
    params.intropolis  = '/path/to/intropolis.v1.hg19_with_liftover_to_hg38.min_count_10.tsv'
    params.polya_atlas = '/path/to/atlas.clusters.2.0.GRCh38.96.mod.bed'
-   params.poly_motifs = '/path/to/human.polyA.list.txt'
+   params.poly_motifs = '${projectDir}/assets/human.polyA.list.txt'
 
 ``params.genome`` must be the **primary assembly** FASTA (chromosomes + unplaced/unlocalised scaffolds, not alternate allele contigs) — this is what GENCODE/Ensembl label ``*.primary_assembly.fa``, and is what pbmm2/minimap2 and downstream variant calling expect.
 
@@ -203,7 +203,7 @@ DeepVariant is used by default and is strongly recommended for PacBio targeted r
 .. code-block:: groovy
 
    params.variant_caller = 'deepvariant'   // default; or 'clair3' to override
-   params.dv_container   = "${projectDir}/containers/deepvariant_1.9.0.sif"
+   params.dv_container   = "${projectDir}/containers/deepvariant_1.9.0_sandbox"
    params.dv_model       = 'MASSEQ'        // for Iso-Seq / MAS-Seq
    params.clair3_model   = null            // only needed if variant_caller = 'clair3'
                                            // e.g. 'hifi_sequel2_pbmm2'
@@ -226,6 +226,22 @@ To list all available models:
 
    singularity exec containers/clair3_rna_latest.sif \
        ls /opt/conda/envs/clair3_rna/bin/clair3_rna_models/
+
+**Clair3 phasing**
+
+.. code-block:: groovy
+
+   params.clair3_enable_phasing = false   // default
+
+Leave this ``false``. It controls Clair3-RNA's ``--enable_phasing_model``, which phases during variant calling. LASER phases separately with WhatsHap after calling, so enabling it duplicates the work.
+
+**Minimum coverage**
+
+.. code-block:: groovy
+
+   params.clair3_min_coverage = 2   // default
+
+Minimum read depth for Clair3-RNA to attempt a call. This sets how many heterozygous sites are available as phase anchors, so it propagates into how many reads WhatsHap can haplotag and therefore how many loci pass ``min_phased_reads_per_locus``. RNA coverage is very uneven across genes, so a low value is deliberate here; the locus-level read filters remove thinly-covered loci afterwards. Raise it if you suspect false heterozygous calls are mis-assigning reads between haplotypes.
 
 ----
 
@@ -280,7 +296,7 @@ abTU's Dirichlet-Multinomial test needs an overdispersion parameter, ``theta``, 
    heart,PLACEHOLDER,,,,,1.1,Not yet calibrated in pipeline form. Run CALIBRATE_THETA_POOLED on heart-only samples (or lift from an existing heart run) and fill this row in.
    all_encode,PLACEHOLDER,,,,,1.1,Not yet calibrated in pipeline form. Run CALIBRATE_THETA_POOLED on the full 9-sample ENCODE set and fill this row in.
 
-Anyone can append their own row. See ``assets/README_calibrated_thetas_reference.md``.
+Anyone can append their own row. See ``assets/README_calibrated_thetas.md``.
 
 .. note::
    **Why** ``calibrate_pooled`` **needs more than one sample:** the calibration pools observed loci across every sample in the run to estimate the empirical false-positive rate at each candidate theta. With a single sample there's nothing to pool — the pipeline refuses to run (``theta_mode = 'calibrate_pooled'`` errors out immediately if fewer than 2 samples are present, before any calibration work starts). With exactly 2 samples it proceeds, but with a warning: the resulting theta rests on a very small basis and may not generalise well. For a single sample, or a small handful you're not confident represents your population well, use ``fixed`` (if you already have a value) or ``lift`` (to borrow an already-validated one) instead.
@@ -396,7 +412,7 @@ Key Params
    min_reads_per_transcript   = 1
    min_total_reads_per_locus  = 30
    min_phased_reads_per_locus = 30
-   min_reads_per_allele       = 5
+   min_reads_per_haplotype    = 5
    max_unphased_prop          = 0.30
 
    // abTE / abTU test parameters
@@ -411,6 +427,8 @@ Key Params
    dm_perm_seed       = 123
 
 The consequence module also has a handful of optional override params (ORFannotate column names, permutation count, FDR threshold) not listed above, because they already default correctly inside the R scripts themselves — a normal config doesn't need to set any of them. See ``run_consequence_test.R`` and ``build_transcript_features.R`` for the full list, if you ever need to override one (e.g. your ORFannotate version names a column differently).
+
+.. _example_configs:
 
 Example Configs
 ~~~~~~~~~~~~~~~
@@ -449,7 +467,6 @@ Resources
      time   = '100h'
 
      withName: 'RUN_DEEPVARIANT' {
-       container = "${projectDir}/containers/deepvariant_1.9.0_sandbox"
        maxForks  = 7
        cpus      = 32
      }

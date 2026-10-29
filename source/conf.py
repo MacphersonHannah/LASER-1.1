@@ -29,7 +29,11 @@ if _nb_src.exists():
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['nbsphinx']
+extensions = ['nbsphinx', 'sphinxcontrib.mermaid']
+
+# Height of rendered Mermaid diagrams. The extension's 500px default squashes
+# the tall pipeline flowchart on the index page until the text is unreadable.
+mermaid_height = '1000px'
 
 # Never run the notebook during the docs build: it needs the finished
 # tutorial run, so show the outputs already saved in the notebook instead.
@@ -42,10 +46,6 @@ exclude_patterns = ['**.ipynb_checkpoints']
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
-
 
 html_theme = 'sphinx_rtd_theme'
 html_theme_options = {

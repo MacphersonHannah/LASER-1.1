@@ -5,32 +5,15 @@ Installation and Requirements
 
 This page covers system requirements, how to install LASER's dependencies, and how to run the pipeline for the first time.
 
-Requirements
-------------
+Prerequisites
+-------------
 
-LASER is distributed as a `Nextflow <https://www.nextflow.io/>`_ pipeline and runs on **Linux** (tested on HPC cluster nodes; not tested on macOS/Windows). The following software must be available before running LASER:
-
-.. list-table::
-   :widths: 25 20 55
-   :header-rows: 1
-
-   * - Tool
-     - Version
-     - Purpose
-   * - `Nextflow <https://www.nextflow.io/>`_
-     - 23.04+
-     - Pipeline orchestration
-   * - `Singularity <https://sylabs.io/>`_ or `Apptainer <https://apptainer.org/>`_
-     - Any recent
-     - Container runtime for DeepVariant, Clair3-RNA, and other tools
-   * - conda / mamba, via `Miniforge <https://github.com/conda-forge/miniforge>`_
-     - 4.x+
-     - Environment management for pipeline dependencies. Miniforge is the recommended way to get both — installing conda alone (e.g. via Anaconda/Miniconda without mamba) will work but environment solves will be noticeably slower, since LASER's setup scripts use ``mamba``. If you already have Miniconda, install mamba into it (``conda install -n base -c conda-forge mamba``) rather than starting over.
-   * - Java
-     - 11+
-     - Required by Nextflow
-
-Speak to your HPC administrator if Singularity is not available on your system. Check availability with ``singularity --version`` or ``apptainer --version`` / ``module load singularity``.
+* **Linux** (tested on HPC cluster nodes; not tested on macOS/Windows).
+* **conda or mamba, via** `Miniforge <https://github.com/conda-forge/miniforge>`_. This is the recommended way to get both. Installing conda on its own (e.g. via Anaconda/Miniconda without mamba) will work but environment solves will be noticeably slower; LASER's setup scripts use ``mamba`` for this reason. If you already have Miniconda, install mamba into it (``conda install -n base -c conda-forge mamba``) rather than starting over.
+* **git, wget and a system python3** — used by ``setup_tools.sh`` to fetch and unpack SQANTI3/ORFannotate.
+* ``setup_envs.sh`` will install ``jq`` and ``curl`` into your conda **base** environment if they aren't already on PATH (a SQANTI3 post-link script needs them).
+* **Singularity or Apptainer** (used for DeepVariant/Clair3-RNA containers). Check with ``singularity --version`` or ``apptainer --version`` / ``module load singularity`` on HPC systems. Ask your HPC administrator if neither is available.
+* **Sufficient compute for setup, not just for runs** — see the warning below before running the setup scripts (Steps 2 & 3 below).
 
 .. warning::
    **Do not run** ``setup_tools.sh`` **/** ``setup_envs.sh`` **on an HPC login node.** These scripts do real work (cloning/downloading tools, solving and building multiple conda environments) and commonly exceed login-node limits — many HPC systems cap login nodes at a handful of CPUs and a small amount of memory per user, and setup will simply be killed partway through. Submit setup as a batch job or run it on an interactive compute node instead. A generic SLURM example (adjust partition/account/time/resources to your cluster):
@@ -61,6 +44,8 @@ This guide assumes a Linux system with conda installed.
 
 **2. Install required tools**
 
+Run this from the LASER-1.1 root directory (the one containing ``main.nf``); both setup scripts use paths relative to it.
+
 .. code-block:: bash
 
    bash scripts/setup/setup_tools.sh
@@ -68,6 +53,8 @@ This guide assumes a Linux system with conda installed.
 This checks for Singularity, downloads ORFannotate, SQANTI3, and DeepVariant, and creates a DeepVariant sandbox. Speak to your HPC administrator if Singularity is not available.
 
 **3. Create required environments**
+
+Again from the LASER-1.1 root directory.
 
 .. code-block:: bash
 
@@ -84,19 +71,26 @@ Creates all conda environments under ``envs_prebuilt/``. Existing environments a
    * - ``pacbio_prep_env``
      - Mapping, refinement (FLNC), demultiplexing (pbmm2, minimap2, isoseq, lima)
    * - ``core_utils_env``
-     - Orchestration + phasing/VCF utilities (nextflow, whatshap, bcftools). Registered as a named env, ``LASER_core_utils_env`` — for manual use: ``conda activate LASER_core_utils_env``
+     - Orchestration + phasing/VCF utilities (nextflow, whatshap, bcftools). For manual use: ``conda activate envs_prebuilt/core_utils_env``
    * - ``isoform_collapse_env``
      - Isoform collapse + basecall trimming (cdna_cupcake, pychopper)
    * - ``stats_r_env``
      - Allelic effect testing statistics (R)
-   * - ``featurecounts_env``, ``flair_env``, ``isocall_laser``
-     - Tool-specific — kept separate due to incompatible dependency pins
+   * - ``flair_env``
+     - Tool-specific, kept separate due to incompatible dependency pins
    * - ``SQANTI3``, ``ORFannotate``
      - Tool-specific, installed by ``setup_tools.sh``
 
 **4. Configure your run**
 
-Edit ``nextflow.config`` — see :doc:`nextflow_workflow_details` for full configuration options.
+Copy the example config that matches your platform from ``example_configs/`` and edit the paths to match your data and references. See :doc:`nextflow_workflow_details` and the comments inside each example for guidance.
+
+.. code-block:: bash
+
+   cp example_configs/example_ont_cdna_minimap_entry.config my_run.config
+   # edit my_run.config with your paths, then pass it to run_LASER.sh (step 5)
+
+See ``example_configs/``: the :ref:`example configs table <example_configs>` lists which file matches each platform.
 
 **5. Run LASER**
 
@@ -106,7 +100,9 @@ Edit ``nextflow.config`` — see :doc:`nextflow_workflow_details` for full confi
 
 This activates the required environment (``core_utils_env``) automatically.
 
-Working files are written to ``run_{RUN_NAME}/work_{RUN_NAME}/``. Results are written to ``run_{RUN_NAME}/{RUN_NAME}/``. The config file used is automatically copied into the results directory for reproducibility.
+Working files are written to ``run_{RUN_NAME}/work_{RUN_NAME}/``. Results are written to ``run_{RUN_NAME}/{RUN_NAME}/``. The config file used is automatically copied into the results directory for reproducibility, along with the Nextflow run report, timeline and trace.
+
+Results are hard-linked to the work directory rather than copied, so they cost almost no extra disk and survive deletion of the work directory.
 
 ``RUN_NAME`` decides where output goes — ``run_LASER.sh`` always passes ``--outdir`` on the Nextflow command line. Edit ``RUN_NAME`` when starting a new run. To re-run, call it the same ``RUN_NAME`` and the ``-resume`` flag in ``run_LASER.sh`` will resume from whatever has changed. To bypass this, delete ``-resume`` in ``run_LASER.sh`` or delete the folder of the original run output.
 
@@ -120,7 +116,7 @@ Each platform has a small test dataset bundled under ``test_data/``, with a read
 .. code-block:: bash
 
    # Example: test the ont_cdna_minimap_entry platform
-   bash run_LASER.sh test_minimap_entry test_data/ONT_cDNA_minimap_input/test_ont_cdna_minimap_entry.config
+   bash run_LASER.sh test_minimap_entry test_data/ONT_cDNA_minimap_input/ONT_cDNA_test_data_minimap_input.config
 
 .. list-table::
    :widths: 25 40 15 20
@@ -161,33 +157,39 @@ Platform Selection
 Set ``params.platform`` in your config to one of:
 
 .. list-table::
-   :widths: 20 50 15 15
+   :widths: 16 40 14 14 16
    :header-rows: 1
 
-   * - Value
+   * - Platform
      - Description
      - Isoform discovery
      - Variant calling
+     - Test data
    * - ``pacbio``
      - PacBio Iso-Seq from raw demultiplexed BAMs. Runs the full IsoSeq3 pipeline: refine, cluster2, collapse, and abundance. Standard or MAS-Iso-Seq (run Skera first for MAS).
      - isoseq3 cluster2 + collapse
      - DeepVariant (default) or Clair3-RNA
+     - ``test_data/PACBIO_untargeted_not_fastq_entry/``
    * - ``pacbio_fastqentry``
-     - PacBio Iso-Seq from already-refined FLNC reads (BAM or fastq.gz). Enters at cluster2, skipping demux and refine. Use this for data downloaded from repositories, processed on another system, or MAS-Iso-Seq that has already been through `Skera <https://github.com/PacificBiosciences/skera>`_ + ``lima`` + ``isoseq refine``.
+     - PacBio Iso-Seq from already-refined FLNC reads (BAM or fastq.gz). Enters at cluster2, skipping demux and refine. Use this for data downloaded from repositories, processed on another system, or MAS-Iso-Seq that has already been through Skera + lima + isoseq refine.
      - isoseq3 cluster2 + collapse
      - DeepVariant (default) or Clair3-RNA
+     - ``test_data/PACBIO_untargeted_fastq_entry/``
    * - ``ont_cdna``
-     - ONT cDNA sequencing from FASTQ. Includes pychopper for adapter trimming before alignment. Full-length reads go to FLAIR for isoform discovery; rescued reads (if ``pychopper_rescued = true``) are used for variant calling only. Set ``params.ont_chemistry`` to ``r9`` or ``r10`` to select the correct minimap2 preset.
+     - ONT cDNA sequencing from FASTQ. Includes pychopper for adapter trimming before alignment. Full-length reads go to FLAIR for isoform discovery; if ``pychopper_rescued = true``, full-length plus rescued reads are used for everything else (variant calling, phasing and quantification). Set ``params.ont_chemistry`` to ``r9`` or ``r10`` to select the correct minimap2 preset.
      - FLAIR
      - Clair3-RNA
+     - ``test_data/ONT_cDNA/``
    * - ``ont_cdna_minimap_entry``
-     - ONT cDNA sequencing from unmapped BAMs (e.g. basecalled but not adapter-trimmed). Skips pychopper entirely; all reads go through a single FLAIR stream for both isoform discovery and quantification. Use this when your data has not been through pychopper, or when you want to skip adapter trimming.
+     - ONT cDNA sequencing from unmapped BAMs which have already been processed with Pychopper. Skips pychopper entirely; all reads go through a single FLAIR stream for both isoform discovery and quantification. Use this when your data has not been through pychopper, or when you want to skip adapter trimming.
      - FLAIR
      - Clair3-RNA
+     - ``test_data/ONT_cDNA_minimap_input/``
    * - ``ont_directrna``
      - ONT direct RNA sequencing. No adapter trimming (pychopper is not used). Reads go straight to minimap2 alignment and FLAIR for isoform discovery.
      - FLAIR
      - Clair3-RNA
+     - ``test_data/ONT_directRNA/``
 
 ----
 
@@ -259,7 +261,7 @@ Most basecallers produce multiple FASTQ files per sample (e.g. one per batch in 
 
 .. code-block:: bash
 
-   bash scripts/setup/concat_fastq.sh fastq_pass/ merged_fastq/ patient1_thalamus
+   bash scripts/setup/concat_ONT_fastq.sh fastq_pass/ merged_fastq/ patient1_thalamus
 
 .. list-table::
    :widths: 25 75
