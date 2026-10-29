@@ -45,3 +45,11 @@ exclude_patterns = ['**.ipynb_checkpoints']
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+
+
+html_theme = 'sphinx_rtd_theme'
+html_theme_options = {
+    # Sidebar header (title, version and search box): pink to match the logo
+    'style_nav_header_background': '#CD547D',
+}
+html_static_path = ['_static']
